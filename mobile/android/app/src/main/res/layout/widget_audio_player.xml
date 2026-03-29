@@ -15,19 +15,36 @@
         android:contentDescription="Episode artwork"
         android:src="@mipmap/ic_launcher" />
 
-    <TextView
-        android:id="@+id/widget_episode_title"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:text="No episode playing"
-        android:textColor="@android:color/white"
-        android:textSize="12sp"
-        android:maxLines="1"
-        android:ellipsize="end"
+        android:orientation="vertical"
+        android:gravity="center_vertical"
         android:paddingStart="8dp"
-        android:paddingEnd="4dp"
-        android:gravity="center_vertical" />
+        android:paddingEnd="4dp">
+
+        <TextView
+            android:id="@+id/widget_podcast_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="#BBBBBB"
+            android:textSize="10sp"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <TextView
+            android:id="@+id/widget_episode_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No episode playing"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+    </LinearLayout>
 
     <ImageButton
         android:id="@+id/widget_btn_rewind"

@@ -31,6 +31,7 @@ class PinepodsWidgetProvider : AppWidgetProvider() {
 
     // What the widget shows, as last pushed by PinepodsMediaService.
     private class WidgetState(
+        val podcastName: String,
         val title: String,
         val artworkUri: String?,
         val artworkData: ByteArray?,
@@ -57,10 +58,14 @@ class PinepodsWidgetProvider : AppWidgetProvider() {
         private var artworkJob: Job? = null
         private val coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
-        // Called by PinepodsMediaService whenever play state or metadata changes.
+        /**
+         * Called by PinepodsMediaService whenever play state or metadata changes.
+         * The service puts the podcast name in the artist field.
+         */
         fun update(context: Context, player: Player) {
             val metadata = player.mediaMetadata
             state = if (player.mediaItemCount == 0) null else WidgetState(
+                podcastName = metadata.artist?.toString() ?: "",
                 title       = metadata.title?.toString() ?: "No episode playing",
                 artworkUri  = metadata.artworkUri?.toString(),
                 artworkData = metadata.artworkData,
@@ -92,6 +97,7 @@ class PinepodsWidgetProvider : AppWidgetProvider() {
 
         private fun render(context: Context, awm: AppWidgetManager, widgetId: Int, current: WidgetState?) {
             val views = RemoteViews(context.packageName, R.layout.widget_audio_player)
+            views.setTextViewText(R.id.widget_podcast_name, current?.podcastName ?: "")
             views.setTextViewText(R.id.widget_episode_title, current?.title ?: "No episode playing")
 
             val artwork = if (current != null && current.artworkKey == artworkKey) artworkBitmap else null
