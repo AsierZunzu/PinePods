@@ -9,7 +9,10 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
+import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.widget.RemoteViews
 import androidx.core.content.ContextCompat
 import androidx.media3.common.Player
@@ -109,6 +112,7 @@ class PinepodsWidgetProvider : AppWidgetProvider() {
             views.setOnClickPendingIntent(R.id.widget_artwork,       buildActionIntent(context, ACTION_OPEN_APP))
             views.setOnClickPendingIntent(R.id.widget_episode_title, buildActionIntent(context, ACTION_OPEN_APP))
 
+            applySquareArtwork(views, awm, widgetId)
             awm.updateAppWidget(widgetId, views)
         }
 
@@ -148,6 +152,21 @@ class PinepodsWidgetProvider : AppWidgetProvider() {
                     connection.readTimeout = 10_000
                     connection.getInputStream().use { BitmapFactory.decodeStream(it) }
                 }
+            }
+        }
+
+        // Sets the artwork ImageView width equal to the widget's actual portrait height.
+        // MAX_HEIGHT is the portrait (taller) dimension; MIN_HEIGHT is landscape (shorter).
+        // coerceAtLeast(60) guards against 0 when options haven't been populated yet.
+        @Suppress("NewApi")
+        private fun applySquareArtwork(views: RemoteViews, awm: AppWidgetManager, id: Int) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                val opts = awm.getAppWidgetOptions(id)
+                val heightDp = maxOf(
+                    opts.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 0),
+                    opts.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 0)
+                ).coerceAtLeast(60)
+                views.setViewLayoutWidth(R.id.widget_artwork, heightDp.toFloat(), TypedValue.COMPLEX_UNIT_DIP)
             }
         }
 
@@ -191,6 +210,16 @@ class PinepodsWidgetProvider : AppWidgetProvider() {
                 launchIntent?.let { appContext.startActivity(it) }
             }
         }
+    }
+
+    override fun onAppWidgetOptionsChanged(
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetId: Int,
+        newOptions: Bundle
+    ) {
+        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
+        render(context.applicationContext, appWidgetManager, appWidgetId, state)
     }
 
     override fun onDisabled(context: Context) {
