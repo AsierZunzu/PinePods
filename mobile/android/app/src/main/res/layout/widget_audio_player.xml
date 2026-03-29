@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@android:color/background_dark"
+    android:paddingStart="8dp"
+    android:paddingEnd="4dp"
+    android:gravity="center_vertical">
+
+    <ImageView
+        android:id="@+id/widget_artwork"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:scaleType="centerCrop"
+        android:contentDescription="Episode artwork"
+        android:src="@mipmap/ic_launcher" />
+
+    <TextView
+        android:id="@+id/widget_episode_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="No episode playing"
+        android:textColor="@android:color/white"
+        android:textSize="12sp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:paddingStart="8dp"
+        android:paddingEnd="4dp" />
+
+    <ImageButton
+        android:id="@+id/widget_btn_rewind"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:src="@drawable/ic_action_rewind_10"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Rewind 10 seconds"
+        android:tint="#FFFFFF" />
+
+    <ImageButton
+        android:id="@+id/widget_btn_play_pause"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_action_play_arrow"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Play/Pause"
+        android:tint="#539e8a"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="2dp" />
+
+    <ImageButton
+        android:id="@+id/widget_btn_fastforward"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:src="@drawable/ic_action_fastforward_30"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Skip forward 30 seconds"
+        android:tint="#FFFFFF" />
+
+</LinearLayout>

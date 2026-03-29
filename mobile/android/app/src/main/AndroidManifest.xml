@@ -98,6 +98,22 @@
             </intent-filter>
         </service>
 
+        <receiver
+                android:name="com.gooseberrydevelopment.pinepods.PinepodsWidgetProvider"
+                android:exported="true"
+                android:label="PinePods Player">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.gooseberrydevelopment.pinepods.WIDGET_PLAY_PAUSE" />
+                <action android:name="com.gooseberrydevelopment.pinepods.WIDGET_REWIND" />
+                <action android:name="com.gooseberrydevelopment.pinepods.WIDGET_FASTFWD" />
+                <action android:name="com.gooseberrydevelopment.pinepods.WIDGET_OPEN_APP" />
+            </intent-filter>
+            <meta-data
+                    android:name="android.appwidget.provider"
+                    android:resource="@xml/appwidget_provider" />
+        </receiver>
+
         <provider
                 android:name="androidx.work.impl.WorkManagerInitializer"
                 android:authorities="${applicationId}.workmanager-init"

@@ -38,6 +38,7 @@ import androidx.media3.ui.PlayerNotificationManager
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.gooseberrydevelopment.pinepods.MainActivity
+import com.gooseberrydevelopment.pinepods.PinepodsWidgetProvider
 import com.gooseberrydevelopment.pinepods.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -313,6 +314,20 @@ class PinepodsMediaService : MediaLibraryService() {
             }
         })
 
+        // Keep the home-screen widget in step with playback.
+        player?.addListener(object : Player.Listener {
+            override fun onEvents(p: Player, events: Player.Events) {
+                if (events.containsAny(
+                        Player.EVENT_PLAY_WHEN_READY_CHANGED,
+                        Player.EVENT_PLAYBACK_STATE_CHANGED,
+                        Player.EVENT_MEDIA_METADATA_CHANGED,
+                        Player.EVENT_TIMELINE_CHANGED
+                    )) {
+                    PinepodsWidgetProvider.update(this@PinepodsMediaService, p)
+                }
+            }
+        })
+
         // Create media session
         val sessionActivityIntent = packageManager?.getLaunchIntentForPackage(packageName)?.let {
             PendingIntent.getActivity(
@@ -449,6 +464,7 @@ class PinepodsMediaService : MediaLibraryService() {
         }
         loudnessEnhancer?.release()
         loudnessEnhancer = null
+        PinepodsWidgetProvider.clear(this)
         super.onDestroy()
 
         Log.d(TAG, "PinepodsMediaService destroyed")
