@@ -8,6 +8,10 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -109,6 +113,7 @@ class PinepodsWidgetProvider : AppWidgetProvider() {
 
             val playPauseIcon = if (current?.isPlaying == true) R.drawable.ic_action_pause else R.drawable.ic_action_play_arrow
             views.setImageViewResource(R.id.widget_btn_play_pause, playPauseIcon)
+            views.setImageViewBitmap(R.id.widget_logo, circularLogoBitmap(context))
 
             if (current != null) {
                 views.setOnClickPendingIntent(R.id.widget_btn_play_pause, buildActionIntent(context, ACTION_PLAY_PAUSE))
@@ -174,6 +179,26 @@ class PinepodsWidgetProvider : AppWidgetProvider() {
                 ).coerceAtLeast(60)
                 views.setViewLayoutWidth(R.id.widget_artwork, heightDp.toFloat(), TypedValue.COMPLEX_UNIT_DIP)
             }
+        }
+
+        private fun circularLogoBitmap(context: Context): Bitmap {
+            val sizePx = (20 * context.resources.displayMetrics.density).toInt()
+
+            // getDrawable handles both PNG mipmaps (API < 26) and adaptive icon XML (API 26+).
+            // BitmapFactory.decodeResource cannot decode adaptive icon XML and returns null.
+            val src = Bitmap.createBitmap(sizePx, sizePx, Bitmap.Config.ARGB_8888)
+            val drawable = context.resources.getDrawable(R.mipmap.ic_launcher_round, context.theme)
+            drawable.setBounds(0, 0, sizePx, sizePx)
+            drawable.draw(Canvas(src))
+
+            val output = Bitmap.createBitmap(sizePx, sizePx, Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(output)
+            val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+            canvas.drawCircle(sizePx / 2f, sizePx / 2f, sizePx / 2f, paint)
+            paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
+            canvas.drawBitmap(src, 0f, 0f, paint)
+            src.recycle()
+            return output
         }
 
         private fun buildActionIntent(context: Context, action: String): PendingIntent {
